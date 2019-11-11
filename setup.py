@@ -16,5 +16,10 @@ setup(
     license = "Apache License 2.0",
     packages = find_packages(),
     long_description = read('README.md'),
-    install_requires = requirements
+    install_requires = requirements,
+    entry_points = {
+        "console_scripts": [
+            "monkey = monkey.service:main"
+        ]
+    }
 )
