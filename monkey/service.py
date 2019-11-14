@@ -1,9 +1,31 @@
-from monkey.application import Server
+from monkey.application import PredictionServer
 import argparse
 import logging
 import sys, os
+import multiprocessing as mp
+
 
 logger = logging.getLogger(__name__)
+
+def run(application):
+    """
+    Start server
+    """
+    try:
+        process = mp.Process(target=application)
+        process.daemon = True
+        process.start()
+        process.join()
+        
+    except Exception as e:
+        print(e)
+        print("Could not start prediction service")
+
+def prediction_server(model_name, options):
+    """
+    Returns callable prediction server 
+    """
+    return PredictionServer(model_name, options).run()
 
 def main():
     LOG_FORMAT = (
@@ -28,7 +50,10 @@ def main():
                     "reload": "true",
                     "workers": args.workers
                 } 
-    Server(args.model_name, options).run()
+    logger.info("Initializing service with model {}".format(args.model_name))
+    application = prediction_server(args.model_name, options)
+    logger.info("Starting service")
+    run(application)
 
 if __name__ == "__main__":
     main()
