@@ -24,3 +24,13 @@ def test_predict_get(test_prediction_server_model_0):
     assert response.json == "{} model is here".format(
         "TestModel")
 
+def test_predict_bad_post(test_prediction_server_model_0):
+    """
+    GIVEN a model contract and Flask application
+    POST on '/predict'
+    THEN check result is valid
+    """
+    data = '{"Bad Request"}'
+    response = test_prediction_server_model_0.post('/predict', data="%s" % data, 
+                headers={"Content-Type": "application/json"})
+    assert response.status_code == 400
