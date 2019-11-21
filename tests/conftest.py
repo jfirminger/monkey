@@ -1,5 +1,5 @@
 import pytest
-from monkey.application import PredictionServer
+from monkey.service.application import PredictionServer
 import sys, os
 from os.path import dirname, join
 

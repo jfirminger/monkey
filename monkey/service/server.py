@@ -1,4 +1,4 @@
-from monkey.application import PredictionServer
+from monkey.service.application import PredictionServer
 import argparse
 import logging
 import sys, os

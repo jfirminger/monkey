@@ -1,0 +1,12 @@
+import dill as pickle
+import os
+
+def easy_wrap(model_object, model_name, path="./.models/"):
+    def model_wrapper(func):
+        directory = path+model_name
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        pickle.dump(model_object, open(directory+"/"+model_name+".pkl", 'wb'))
+        pickle.dump(func, open(directory+"/"+model_name+"-wrapper.pkl", 'wb'))
+        return func
+    return model_wrapper

@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import importlib
 import os
-from monkey.wsgi import WSGIServer
+from monkey.service.wsgi import WSGIServer
 import logging
 
 class PredictionServer(object):

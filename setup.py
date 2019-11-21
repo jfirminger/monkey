@@ -19,7 +19,7 @@ setup(
     install_requires = requirements,
     entry_points = {
         "console_scripts": [
-            "monkey = monkey.service:main"
+            "monkey = monkey.service.server:main"
         ]
     }
 )
