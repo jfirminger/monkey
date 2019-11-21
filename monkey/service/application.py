@@ -39,5 +39,8 @@ class PredictionServer(object):
 
         return app
         
-    def run(self):
-        WSGIServer(self.application, self.options).run()
+    def run(self, wsgi_flag):
+        if wsgi_flag:
+            WSGIServer(self.application, self.options).run()
+        else:
+            self.application.run(host="0.0.0.0", port="5000")
