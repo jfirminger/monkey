@@ -1,0 +1,1 @@
+from monkey.version import __version__
