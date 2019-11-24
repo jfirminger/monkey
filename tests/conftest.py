@@ -1,7 +1,7 @@
 import pytest
 from monkey.service.application import PredictionServer
-from monkey.easy.decorators import easy_wrap
-from monkey.easy.wrappers import EasyModel
+from monkey.easy.decorators import easy_wrap, monkey_wrap
+from monkey.easy.wrappers import EasyModel, MonkeyModel
 import sys, os
 from os.path import dirname, join
 
@@ -25,3 +25,11 @@ def test_easy_wrap_local():
 @pytest.fixture
 def test_easy_model_class():
     return EasyModel
+
+@pytest.fixture
+def test_monkey_wrap_local():
+    return monkey_wrap
+
+@pytest.fixture
+def test_monkey_model_class():
+    return MonkeyModel

@@ -1,4 +1,8 @@
 import dill as pickle
+import json
+from os import listdir
+from os.path import isfile, join
+
 
 class EasyModel(object):
             def __init__(self, model_name, path="./.models/"):
@@ -9,38 +13,29 @@ class EasyModel(object):
                 result = self.func(X, self.model)
                 return result
 
+##TODO write test cases, and determine best course of action for
 class MonkeyModel(object):
-        def __init__(self, model_name, config, path="./models/"):
-            """
-            example config = {
-                "model_name" : "demo",
-                "model_objects" : { 
-                    "names" : ["model1", "model2"]
-                },
-                
-                "artifacts" : {
-                    "names" : ["word2index", "index2word"]
-                }
-            }
-
-            """
-            directory = path+config["model_name"]
-          
-            self.models = self._get_dependencies(config=config, 
+        def __init__(self, model_name, path="./.models/"):
+            directory = path+model_name          
+            self.models = self._get_dependencies(file_type="model-object", 
                                                 dependency_type="model_objects", 
                                                 directory=directory)
 
-            self.artifacts = self._get_dependencies(config=config, 
+            self.artifacts = self._get_dependencies(file_type="artifact", 
                                                 dependency_type="artifacts", 
                                                 directory=directory)
 
             self.func = pickle.load(open(directory+"/"+model_name+"-wrapper.pkl", 'rb'))
                 
-        def _get_dependencies(self, config, dependency_type, directory):
+        def _get_dependencies(self, file_type, dependency_type, directory):
             dependencies = {}
-            for d in config[dependency_type]["names"]:
-                dependencies[d] = pickle.load(open(directory+"/"+d+".pkl", 'rb'))
-            
+            cnt = 0
+            for f in listdir(directory):
+                if isfile(join(directory, f)):
+                    if file_type in f:
+                        dependencies["{0}-{1}".format(file_type, cnt)] = pickle.load(open(directory+"/"+f, 'rb'))
+                        cnt += 1
+                    
             return dependencies
 
         def predict(self, X):
