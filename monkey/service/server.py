@@ -1,4 +1,4 @@
-from monkey.application import PredictionServer
+from monkey.service.application import PredictionServer
 import argparse
 import logging
 import sys, os
@@ -21,18 +21,17 @@ def run(application):
         print(e)
         print("Could not start prediction service")
 
-def prediction_server(model_name, options):
+def prediction_server(model_name, options, wsgi_flag):
     """
     Returns callable prediction server 
     """
-    return PredictionServer(model_name, options).run()
+    return PredictionServer(model_name, options).run(wsgi_flag)
 
 def main():
     LOG_FORMAT = (
         "%(asctime)s - %(name)s:%(funcName)s:%(lineno)s - %(levelname)s:  %(message)s"
     )
     logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
-    logger.info("Starting service.py:main")
 
     sys.path.append(os.getcwd())
 
@@ -40,7 +39,9 @@ def main():
     parser.add_argument("--model-name", type=str, help="Name of the user model.")
     parser.add_argument("--workers", type=int, default=1, help="Number of workers.")
     parser.add_argument("--port", type=int, default=5000, help="Port to expose")
-
+    parser.add_argument('--wsgi', dest='wsgi_flag', action='store_true')
+    parser.add_argument('--no-wsgi', dest='wsgi_flag', action='store_false')
+    parser.set_defaults(wsgi_flag=True)
     args = parser.parse_args()
 
     options = {
@@ -50,9 +51,7 @@ def main():
                     "reload": "true",
                     "workers": args.workers
                 } 
-    logger.info("Initializing service with model {}".format(args.model_name))
-    application = prediction_server(args.model_name, options)
-    logger.info("Starting service")
+    application = prediction_server(args.model_name, options, args.wsgi_flag)
     run(application)
 
 if __name__ == "__main__":

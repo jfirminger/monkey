@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 import importlib
 import os
-from monkey.wsgi import WSGIServer
+from monkey.service.wsgi import WSGIServer
+import logging
 
 class PredictionServer(object):
 
@@ -22,18 +23,24 @@ class PredictionServer(object):
         return model_class
 
     def _create_application(self):
-        application = Flask(__name__)
+        app = Flask(__name__)
 
-        @application.route("/predict", methods=["GET","POST"])
+        @app.route("/predict", methods=["GET","POST"])
         def predict():
             if request.method == "POST":
                 json_req = request.json
-                results = self.model.predict(json_req)
-                return jsonify(results)
+                try:
+                    results = self.model.predict(json_req)
+                    return jsonify(results)
+                except:
+                    return "Unable to process request", 400
             else:
                 return jsonify("{} model is here".format(self.model_name))
 
-        return application
+        return app
         
-    def run(self):
-        WSGIServer(self.application, self.options).run()
+    def run(self, wsgi_flag):
+        if wsgi_flag:
+            WSGIServer(self.application, self.options).run()
+        else:
+            self.application.run(host="0.0.0.0", port="5000")
