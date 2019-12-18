@@ -1,13 +1,9 @@
 from os import listdir, remove, rmdir
 from os.path import isfile, join, exists
+import shutil
 
-def clean_up_dir(directory, path):
-    for f in listdir(directory):
-        f_path = join(directory, f)
-        if isfile(f_path):
-            remove(f_path) 
-    rmdir(directory)
-    rmdir(path)
+def clean_up_dir(directory):
+    shutil.rmtree(directory)
 
 class AddTwo():
         def __init__(self):
@@ -33,10 +29,10 @@ def test_easy_wrap_decorator_local(test_easy_wrap_local):
     def invoke(X, model):
         return model.predict(X)
 
-    assert bool(exists(directory+"/"+model_name+".pkl")) != False
+    assert bool(exists(directory+"/"+model_name+"-model-object.pkl")) != False
     assert bool(exists(directory+"/"+model_name+"-wrapper.pkl")) != False
-
-    clean_up_dir(directory, path)
+    
+    clean_up_dir(path)
 
 def test_monkey_wrap_decorator_local(test_monkey_wrap_local):
     a2 = AddTwo()
@@ -63,14 +59,13 @@ def test_monkey_wrap_decorator_local(test_monkey_wrap_local):
     assert bool(exists(directory+"/"+model_name+"-model-object-1.pkl")) != False
     assert bool(exists(directory+"/"+model_name+"-artifact-0.pkl")) != False
 
-    clean_up_dir(directory, path)
+    clean_up_dir(path)
 
 def test_easy_class_local(test_easy_wrap_local, test_easy_model_class):
     at = AddTwo()
     
     path = ".models/"
     model_name = "atmodel"
-    directory = path+model_name
 
     easy_wrap = test_easy_wrap_local
     @easy_wrap(model_object=at, model_name=model_name, path=path)
@@ -80,7 +75,7 @@ def test_easy_class_local(test_easy_wrap_local, test_easy_model_class):
     easy_model = test_easy_model_class(model_name=model_name, path=path)
     assert easy_model.predict(1) == 3
 
-    clean_up_dir(directory, path)
+    clean_up_dir(path)
 
 
 def test_monkey_class_local(test_monkey_wrap_local, test_monkey_model_class):
@@ -91,7 +86,6 @@ def test_monkey_class_local(test_monkey_wrap_local, test_monkey_model_class):
 
     path = ".models/"
     model_name = "addmodel"
-    directory = path+model_name
 
     monkey_wrap = test_monkey_wrap_local
     @monkey_wrap([a2, a3], [v], model_name=model_name, path=path)
@@ -112,5 +106,5 @@ def test_monkey_class_local(test_monkey_wrap_local, test_monkey_model_class):
     monkey_model = test_monkey_model_class(model_name=model_name, path=path)
     assert monkey_model.predict(0) == 5
 
-    clean_up_dir(directory, path)
+    clean_up_dir(path)
 
