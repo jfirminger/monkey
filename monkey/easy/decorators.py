@@ -7,7 +7,7 @@ def easy_wrap(model_object, model_name, path=".models/"):
         if not os.path.exists(directory):
             os.makedirs(directory)
         try:
-            pickle.dump(model_object, open(directory+"/"+model_name+".pkl", 'wb'))
+            pickle.dump(model_object, open(directory+"/"+model_name+"-model-object.pkl", 'wb'))
         except Exception as e:
             print(e)
             print("Cannot save local model_object {}. Try defining as global variable".format(model_object))
